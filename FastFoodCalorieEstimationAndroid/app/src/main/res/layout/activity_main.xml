@@ -4,15 +4,157 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/black"
+    tools:context=".activity.MainActivity">
 
-    <TextView
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:visibility="gone"
+        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"/>
+    
+    <ImageView
+        android:id="@+id/preview_image_input"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_margin="10dp"
+        app:srcCompat="@drawable/ic_place_holder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_camera"/>
+    
+    <Button
+        android:id="@+id/btn_camera"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:fontFamily="@font/nexa_bold"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preview_image_input"
+        app:layout_constraintEnd_toStartOf="@id/btn_gallery"
+        app:layout_constraintBottom_toTopOf="@id/btn_calculate"/>
+    
+    <Button
+        android:id="@+id/btn_gallery"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Gallery"
+        android:fontFamily="@font/nexa_bold"
+        android:background="@drawable/rounded_button"
+        app:layout_constraintStart_toEndOf="@id/btn_camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_camera"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintBottom_toBottomOf="@id/btn_camera"/>
+
+    <Button
+        android:id="@+id/btn_calculate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Calculate the Calorie"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/nexa_bold"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="@id/btn_camera"
+        app:layout_constraintEnd_toEndOf="@id/btn_gallery"
+        app:layout_constraintTop_toBottomOf="@id/btn_camera"
+        app:layout_constraintBottom_toTopOf="@id/preview_image_output"/>
+
+    <ImageView
+        android:id="@+id/preview_image_output"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_place_holder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_calculate"
+        app:layout_constraintBottom_toTopOf="@id/tv_result_title"/>
+
+    <TextView
+        android:id="@+id/tv_result_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Estimation Result"
+        android:textColor="@color/white"
+        android:fontFamily="@font/comfortaa"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preview_image_output"
+        app:layout_constraintBottom_toTopOf="@id/tv_result_content_type"/>
+
+    <TextView
+        android:id="@+id/tv_result_content_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type:"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_title"
+        app:layout_constraintBottom_toTopOf="@id/tv_result_content_total_calorie"/>
+
+    <TextView
+        android:id="@+id/tv_result_content_total_calorie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Calorie:"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:layout_marginStart="40dp"
+        android:layout_marginVertical="20dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_content_type"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/tv_result_content_type_prediction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="Ayam Goreng"
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat_semibold"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="15dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/tv_result_content_type"
+        app:layout_constraintTop_toTopOf="@id/tv_result_content_type"
+        app:layout_constraintBottom_toBottomOf="@id/tv_result_content_type"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_result_content_total_calorie_prediction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="1000 cal"
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat_semibold"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="15dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/tv_result_content_total_calorie"
+        app:layout_constraintTop_toTopOf="@id/tv_result_content_total_calorie"
+        app:layout_constraintBottom_toBottomOf="@id/tv_result_content_total_calorie"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
