@@ -6,10 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.marc.com.fastfoodcalorieestimationandroid.activity.ViewModelFactory
 import android.marc.com.fastfoodcalorieestimationandroid.databinding.ActivityMainBinding
-import android.marc.com.fastfoodcalorieestimationandroid.helper.createCustomTempFile
-import android.marc.com.fastfoodcalorieestimationandroid.helper.reduceFileImage
-import android.marc.com.fastfoodcalorieestimationandroid.helper.rotateBitmap
-import android.marc.com.fastfoodcalorieestimationandroid.helper.uriToFile
+import android.marc.com.fastfoodcalorieestimationandroid.helper.*
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -25,10 +22,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.ByteArrayInputStream
 import java.io.File
+import net.jpountz.lz4.LZ4BlockInputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -90,11 +90,11 @@ class MainActivity : AppCompatActivity() {
                 val file = reduceFileImage(uploadFile as File)
                 val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                    "photo",
+                    "file",
                     file.name,
                     requestImageFile
                 )
-                mainViewModel.testApi()
+                mainViewModel.predictImage(imageMultipart)
             } else {
                 // dialog error
             }
@@ -137,6 +137,25 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.progressBar.visibility = View.GONE
             }
+        }
+
+        mainViewModel.imageByteArray.observe(this) { imgByteArray ->
+            Log.d("MainActivity", imgByteArray::class.simpleName.toString())
+            Log.d("Main Activity", imgByteArray.size.toString())
+            binding.previewImageOutput.visibility = View.VISIBLE
+//            val decompressedImgByteArray = decompressLz4(imgByteArray)
+            Glide.with(this)
+                .asBitmap()
+                .load(imgByteArray)
+                .into(binding.previewImageOutput)
+//            binding.previewImageOutput.setImageBitmap(toBitmap(imgByteArray))
+            binding.tvResultTitle.visibility = View.VISIBLE
+            binding.tvResultContentType.visibility = View.VISIBLE
+            binding.tvResultContentTypePrediction.text = "imgByteArray"
+            binding.tvResultContentTypePrediction.visibility = View.VISIBLE
+            binding.tvResultContentTotalCalorie.visibility = View.VISIBLE
+            binding.tvResultContentTotalCaloriePrediction.text = "0 cal"
+            binding.tvResultContentTotalCaloriePrediction.visibility = View.VISIBLE
         }
 
         mainViewModel.testString.observe(this) { str ->

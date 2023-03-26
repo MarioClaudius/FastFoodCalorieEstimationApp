@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
+import net.jpountz.lz4.LZ4BlockInputStream
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -88,4 +90,29 @@ fun reduceFileImage(file: File): File {
     } while (streamLength > 1000000)
     bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
     return file
+}
+
+fun toBitmap(byteArray: ByteArray) : Bitmap {
+    Log.d("HELPER", byteArray::class.simpleName.toString())
+    Log.d("HELPER", byteArray.size.toString())
+    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+}
+
+fun decompressLz4(byteArray: ByteArray): ByteArray {
+    val blockSize = 4096 // set the block size to read data in chunks
+    val buffer = ByteArray(blockSize)
+    val inputStream = ByteArrayInputStream(byteArray)
+    val lz4BlockInputStream = LZ4BlockInputStream(inputStream)
+    val outputStream = ByteArrayOutputStream()
+
+    var bytesRead = 0
+    while (lz4BlockInputStream.read(buffer, 0, blockSize).also { bytesRead = it } != -1) {
+        outputStream.write(buffer, 0, bytesRead)
+    }
+
+    outputStream.close()
+    lz4BlockInputStream.close()
+    inputStream.close()
+
+    return outputStream.toByteArray()
 }
