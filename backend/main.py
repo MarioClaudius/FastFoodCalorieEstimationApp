@@ -27,7 +27,7 @@ async def predict_image(file: UploadFile = File(...)):
     result1 = server_model.predict(image)
     result = result1[0]
     # print(result)
-    masked_image = server_model.get_masked_image(image, result['rois'], result['masks'], result['class_ids'], ['BG', 'Dada', 'Nugget', 'Kartu'], result['scores'])
+    masked_image = server_model.get_masked_image(image, result['rois'], result['masks'], result['class_ids'], ['BG', 'Ayam Goreng', 'French Fries', 'Hamburger', 'Nugget', 'Kartu', 'Others'], result['scores'])
     print(type(masked_image))
     masked_image_pil = Image.fromarray(masked_image.astype(np.uint8))
     pil_bytes = BytesIO()

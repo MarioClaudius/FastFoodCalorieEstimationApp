@@ -14,7 +14,7 @@ from mrcnn.config import Config
 model = None
 ROOT_PATH = os.path.abspath(os.curdir)
 MODEL_DIR = os.path.join(ROOT_PATH, "logs")
-weight_path = os.path.join(MODEL_DIR, "mask_rcnn_fastfood_0008.h5")
+weight_path = os.path.join(MODEL_DIR, "mask_rcnn_fastfood_0023.h5")
 
 def load_model():
     config = FastFoodConfig()
@@ -140,7 +140,7 @@ class FastFoodConfig(Config):
     GPU_COUNT = 1
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 3  # Background + dada, nugget, kartu
+    NUM_CLASSES = 1 + 6  # Background + dada, nugget, kartu
 
     # Number of training steps per epoch
     # STEPS_PER_EPOCH = 10
