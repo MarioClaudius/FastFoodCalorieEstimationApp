@@ -26,10 +26,8 @@ class MainViewModel: ViewModel() {
     private val _testString = MutableLiveData<String>()
     val testString: LiveData<String> = _testString
 
-//    private val _imageByteArray = MutableLiveData<String>()
-//    val imageByteArray: LiveData<String> = _imageByteArray
-    private val _imageByteArray = MutableLiveData<ByteArray>()
-    val imageByteArray: LiveData<ByteArray> = _imageByteArray
+    private val _predictResponse = MutableLiveData<PredictResponse>()
+    val predictResponse : LiveData<PredictResponse> = _predictResponse
 
     init {
         _isLoading.value = false
@@ -53,9 +51,7 @@ class MainViewModel: ViewModel() {
                 if (response.isSuccessful) {
                     Log.d("PREDICT IMAGE", "SUCCESS")
                     endLoading()
-                    _imageByteArray.value = Base64.decode(response.body()?.imageByteEncoded, Base64.DEFAULT)
-                    Log.d("cek", _imageByteArray.value.toString())
-                    Log.d("CEK1", (_imageByteArray.value == null).toString())
+                    _predictResponse.value = response.body()
                 }
             }
 

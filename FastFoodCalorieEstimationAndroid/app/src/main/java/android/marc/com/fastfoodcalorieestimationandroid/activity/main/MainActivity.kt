@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.marc.com.fastfoodcalorieestimationandroid.activity.ViewModelFactory
+import android.marc.com.fastfoodcalorieestimationandroid.activity.error.ErrorActivity
 import android.marc.com.fastfoodcalorieestimationandroid.databinding.ActivityMainBinding
 import android.marc.com.fastfoodcalorieestimationandroid.helper.*
 import android.net.Uri
@@ -12,6 +13,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.view.WindowInsets
@@ -139,23 +141,34 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        mainViewModel.imageByteArray.observe(this) { imgByteArray ->
-            Log.d("MainActivity", imgByteArray::class.simpleName.toString())
-            Log.d("Main Activity", imgByteArray.size.toString())
-            binding.previewImageOutput.visibility = View.VISIBLE
-//            val decompressedImgByteArray = decompressLz4(imgByteArray)
-            Glide.with(this)
-                .asBitmap()
-                .load(imgByteArray)
-                .into(binding.previewImageOutput)
-//            binding.previewImageOutput.setImageBitmap(toBitmap(imgByteArray))
-            binding.tvResultTitle.visibility = View.VISIBLE
-            binding.tvResultContentType.visibility = View.VISIBLE
-            binding.tvResultContentTypePrediction.text = "imgByteArray"
-            binding.tvResultContentTypePrediction.visibility = View.VISIBLE
-            binding.tvResultContentTotalCalorie.visibility = View.VISIBLE
-            binding.tvResultContentTotalCaloriePrediction.text = "0 cal"
-            binding.tvResultContentTotalCaloriePrediction.visibility = View.VISIBLE
+        mainViewModel.predictResponse.observe(this) { predictResponse ->
+            if (!predictResponse.isError) {
+                val imgByteArray = Base64.decode(predictResponse.imageByteEncoded, Base64.DEFAULT)
+                Glide.with(this)
+                    .asBitmap()
+                    .load(imgByteArray)
+                    .into(binding.previewImageOutput)
+                binding.previewImageOutput.visibility = View.VISIBLE
+                binding.tvResultTitle.visibility = View.VISIBLE
+                binding.tvResultContentType.visibility = View.VISIBLE
+                binding.tvResultContentTypePrediction.text = predictResponse.type
+                binding.tvResultContentTypePrediction.visibility = View.VISIBLE
+                binding.tvResultContentTotalCalorie.visibility = View.VISIBLE
+                binding.tvResultContentTotalCaloriePrediction.text = predictResponse.calorie.toString() + " cal"
+                binding.tvResultContentTotalCaloriePrediction.visibility = View.VISIBLE
+            } else {
+                binding.apply {
+                    previewImageOutput.visibility = View.INVISIBLE
+                    tvResultTitle.visibility = View.INVISIBLE
+                    tvResultContentType.visibility = View.INVISIBLE
+                    tvResultContentTypePrediction.visibility = View.INVISIBLE
+                    tvResultContentTotalCalorie.visibility = View.INVISIBLE
+                    tvResultContentTotalCaloriePrediction.visibility = View.INVISIBLE
+                }
+                val intentToError = Intent(this@MainActivity, ErrorActivity::class.java)
+                intentToError.putExtra(ERROR_MESSAGE_KEY, predictResponse.errorMessage)
+                startActivity(intentToError)
+            }
         }
 
         mainViewModel.testString.observe(this) { str ->
@@ -171,7 +184,9 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.isError.observe(this) { isError ->
             if (isError) {
-                Log.d("ERROR BACKEND", "ERROR")
+                val intentToError = Intent(this@MainActivity, ErrorActivity::class.java)
+                intentToError.putExtra(ERROR_MESSAGE_KEY, "Server error or internet problem")
+                startActivity(intentToError)
             }
         }
     }
@@ -214,5 +229,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
+        const val ERROR_MESSAGE_KEY = "error_message"
     }
 }
